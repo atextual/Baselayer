@@ -1,10 +1,14 @@
 package main
 
 import (
-	"MigrationManager/models"
+	"BaseLayer/handlers"
+	"BaseLayer/middleware"
+	"BaseLayer/models"
+	"github.com/gorilla/mux"
 	"gopkg.in/yaml.v2"
 	"io"
 	"log"
+	"net/http"
 	"os"
 	"path"
 	"strconv"
@@ -38,4 +42,15 @@ func main() {
 	// @todo - dial into each database, update state in migration manager sqlite db
 	// @todo - compute list of complete vs pending migrations, add to cache
 	// @todo - start http listener
+	r := mux.NewRouter()
+	r.Use(middleware.JsonContentTypeMiddleware)
+
+	r.HandleFunc("/", handlers.RootHandler).Methods("GET", "OPTIONS")
+
+	log.Println("Listening on port 8080")
+
+	err = http.ListenAndServe(":8080", r)
+	if err != nil {
+		panic(err)
+	}
 }

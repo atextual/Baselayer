@@ -5,7 +5,7 @@ import (
 	"BaseLayer/middleware"
 	"BaseLayer/models"
 	"github.com/gorilla/mux"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	"io"
 	"log"
 	"net/http"

@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"MigrationManager/models"
+	"BaseLayer/models"
 	"encoding/json"
 	"net/http"
 )

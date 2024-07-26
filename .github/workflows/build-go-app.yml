@@ -8,9 +8,6 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        packages: ['handler', 'middleware', 'model', 'repo']
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

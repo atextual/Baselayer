@@ -1,9 +1,9 @@
 package main
 
 import (
-	"BaseLayer/handlers"
+	"BaseLayer/handler"
 	"BaseLayer/middleware"
-	"BaseLayer/models"
+	"BaseLayer/model"
 	"BaseLayer/repo"
 	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	var projects models.Projects = map[string]*models.Project{}
+	var projects model.Projects = map[string]*model.Project{}
 
 	f, err := os.Open("config.yml")
 	if err != nil {
@@ -83,8 +83,8 @@ func main() {
 	r := mux.NewRouter()
 	r.Use(middleware.JsonContentTypeMiddleware)
 
-	r.HandleFunc("/", handlers.RootHandler).Methods("GET", "OPTIONS")
-	r.HandleFunc("/databases", handlers.DatabaseListHandler).Methods("GET")
+	r.HandleFunc("/", handler.RootHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc("/databases", handler.DatabaseListHandler).Methods("GET")
 
 	log.Println("Listening on port 8080")
 

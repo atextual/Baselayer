@@ -4,5 +4,7 @@
 # Developer config file, only ship an example
 config.yml
 
-# Binary
+# Binary files
 BaseLayer
+BaseLayer.sqlite3
+identifier.sqlite

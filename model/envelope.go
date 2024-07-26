@@ -1,4 +1,4 @@
-package models
+package model
 
 type ResponseEnvelope struct {
 	Message string `json:"message"`

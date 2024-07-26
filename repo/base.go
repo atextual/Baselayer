@@ -1,16 +1,16 @@
 package repo
 
 import (
-	"BaseLayer/models"
+	"BaseLayer/model"
 	"github.com/jmoiron/sqlx"
 	"log"
 	"sync"
 )
 
 var lock = &sync.Mutex{}
-var connection *models.Connection
+var connection *model.Connection
 
-func GetConnection() (*models.Connection, error) {
+func GetConnection() (*model.Connection, error) {
 	if connection == nil {
 		lock.Lock()
 		defer lock.Unlock()
@@ -23,7 +23,7 @@ func GetConnection() (*models.Connection, error) {
 			log.Println("Internal BaseLayer database connection established")
 		}
 
-		connection = &models.Connection{
+		connection = &model.Connection{
 			Db: db,
 		}
 	}

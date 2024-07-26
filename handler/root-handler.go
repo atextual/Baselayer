@@ -1,13 +1,13 @@
-package handlers
+package handler
 
 import (
-	"BaseLayer/models"
+	"BaseLayer/model"
 	"encoding/json"
 	"net/http"
 )
 
 func RootHandler(w http.ResponseWriter, r *http.Request) {
-	response := models.ResponseEnvelope{Message: "System is running", Data: nil}
+	response := model.ResponseEnvelope{Message: "System is running", Data: nil}
 
 	jsonResponse, jsonError := json.Marshal(response)
 	if jsonError != nil {

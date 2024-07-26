@@ -8,6 +8,9 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        packages: ['handler', 'middleware', 'model', 'repo']
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,5 +23,14 @@ jobs:
       - name: Run build
         run: go build -v main.go
 
-      - name: Run tests
-        run: go test
+      - name: Run handler package tests
+        run: go test ./handler
+
+      - name: Run middleware package tests
+        run: go test ./middleware
+
+      - name: Run model package tests
+        run: go test ./model
+
+      - name: Run repo package tests
+        run: go test ./repo

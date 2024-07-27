@@ -21,13 +21,13 @@ jobs:
         run: go build -v main.go
 
       - name: Run handler package tests
-        run: go test ./handler
+        run: go test -v ./handler
 
       - name: Run middleware package tests
-        run: go test ./middleware
+        run: go test -v ./middleware
 
       - name: Run model package tests
-        run: go test ./model
+        run: go test -v ./model
 
       - name: Run repo package tests
-        run: go test ./repo
+        run: go test -v ./repo

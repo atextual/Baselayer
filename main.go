@@ -84,7 +84,8 @@ func main() {
 	r.Use(middleware.JsonContentTypeMiddleware)
 
 	r.HandleFunc("/", handler.RootHandler).Methods("GET", "OPTIONS")
-	r.HandleFunc("/databases", handler.DatabaseListHandler).Methods("GET")
+	r.HandleFunc("/databases", handler.ListDatabases).Methods("GET")
+	r.HandleFunc("/databases/{id:[0-9]+}", handler.GetDatabase).Methods("GET")
 
 	log.Println("Listening on port 8080")
 

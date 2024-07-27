@@ -53,3 +53,25 @@ func ListDatabases(connection *sqlx.DB) ([]model.Database, error) {
 
 	return databases, nil
 }
+
+func GetDatabase(connection *sqlx.DB, id int) (*model.Database, error) {
+	var database model.Database
+
+	if connection == nil {
+		cxn, err := GetConnection()
+		if err != nil {
+			return nil, err
+		}
+
+		connection = cxn.Db
+	}
+
+	stmt := `SELECT * FROM databases WHERE id = ?`
+	row := connection.QueryRowx(stmt, id)
+	err := row.StructScan(&database)
+	if err != nil {
+		return nil, err
+	}
+
+	return &database, nil
+}

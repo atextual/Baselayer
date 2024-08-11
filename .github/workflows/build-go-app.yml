@@ -20,14 +20,5 @@ jobs:
       - name: Run build
         run: go build -v main.go
 
-      - name: Run handler package tests
-        run: go test -v ./handler
-
-      - name: Run middleware package tests
-        run: go test -v ./middleware
-
-      - name: Run model package tests
-        run: go test -v ./model
-
-      - name: Run repo package tests
-        run: go test -v ./repo
+      - name: Run tests
+        run: go test -v ./...

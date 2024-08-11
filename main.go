@@ -49,8 +49,8 @@ func main() {
 		project.Name = key // Slightly hacky workaround to get the key from the map assigned to the struct
 		log.Println("Project name: " + project.Name + " (" + path.Join(project.ProjectDirectory, project.SqlDirectory) + ")")
 
-		normalised_project_name := strings.ToUpper(key)
-		row := db.QueryRow("SELECT COUNT(*) FROM databases WHERE normalised_name = ?", normalised_project_name)
+		normalisedProjectName := strings.ToUpper(key) + "_DATABASE"
+		row := db.QueryRow("SELECT COUNT(*) FROM databases WHERE normalised_name = ?", normalisedProjectName)
 
 		if err != nil {
 			log.Println(err.Error())
@@ -67,6 +67,13 @@ func main() {
 			log.Println("Project " + project.Name + " already in db, skipping")
 		} else if recordCount == 0 {
 			log.Println("Project " + project.Name + " currently untracked, adding")
+
+			// Some columns will not be provided in config (e.g. normalised columns) and some are optional
+			// (e.g. database name), make a best guess at proving some default values before proceeding
+			project.Database.Name = project.Name + "_database"
+			project.Database.NormalisedName = strings.ToUpper(project.Name + "_database")
+			project.Database.NormalisedDriver = strings.ToUpper(project.Database.Driver)
+
 			_, err := repo.AddDatabase(db, project)
 			if err != nil {
 				log.Println("Failed to add project " + project.Name + " to internal BaseLayer database, skipping")
@@ -86,6 +93,7 @@ func main() {
 	r.HandleFunc("/", handler.RootHandler).Methods("GET", "OPTIONS")
 	r.HandleFunc("/databases", handler.ListDatabases).Methods("GET")
 	r.HandleFunc("/databases/{id:[0-9]+}", handler.GetDatabase).Methods("GET")
+	r.HandleFunc("/databases", handler.CreateDatabase).Methods("POST")
 
 	log.Println("Listening on port 8080")
 
@@ -108,10 +116,12 @@ func initialiseDatabase() {
 		CREATE TABLE IF NOT EXISTS databases (
 			id INTEGER NOT NULL PRIMARY KEY,
 			name TEXT NOT NULL,
-			normaliseD_name TEXT NOT NULL,
+			normalised_name TEXT NOT NULL,
 			driver VARCHAR(11) NOT NULL,
+			normalised_driver VARCHAR(11) NOT NULL,
 		    username TEXT NOT NULL,
 		    password TEXT NOT NULL,
+		    database TEXT NOT NULL,
 		    port INTEGER NOT NULL
 		);
 	`

@@ -3,20 +3,24 @@ package repo
 import (
 	"BaseLayer/model"
 	"github.com/jmoiron/sqlx"
-	"strings"
 )
 
 func AddDatabase(connection *sqlx.DB, model *model.Project) (*model.Project, error) {
-	stmt := `INSERT INTO databases VALUES (NULL, ?, ?, ?, ?, ?, ?)`
-	_, err := connection.Exec(
+	stmt := `INSERT INTO databases VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)`
+	res, err := connection.Exec(
 		stmt,
-		model.Name,
-		strings.ToUpper(model.Name),
+		model.Database.Name,
+		model.Database.NormalisedName,
 		model.Database.Driver,
+		model.Database.NormalisedDriver,
 		model.Database.Username,
 		model.Database.Password,
+		model.Database.Database,
 		model.Database.Port,
 	)
+
+	newId, err := res.LastInsertId()
+	model.Database.Id = int(newId)
 
 	return model, err
 }

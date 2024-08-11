@@ -3,10 +3,12 @@ package handler
 import (
 	"BaseLayer/model"
 	"BaseLayer/repo"
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func ListDatabases(w http.ResponseWriter, r *http.Request) {
@@ -57,4 +59,28 @@ func GetDatabase(w http.ResponseWriter, r *http.Request) {
 	envelope.Data = database
 
 	RespondJson(w, envelope, http.StatusOK)
+}
+
+func CreateDatabase(w http.ResponseWriter, r *http.Request) {
+	envelope := model.ResponseEnvelope{
+		Message: "",
+		Data:    nil,
+	}
+
+	var project *model.Project
+	err := json.NewDecoder(r.Body).Decode(&project)
+
+	project.Database.NormalisedName = strings.ToUpper(project.Database.Name)
+	project.Database.NormalisedDriver = strings.ToUpper(project.Database.Driver)
+
+	cxn, err := repo.GetConnection()
+	projectModel, err := repo.AddDatabase(cxn.Db, project)
+	if err != nil {
+		panic(err) // @todo - update this to something useful
+	}
+
+	envelope.Message = "Project created successfully"
+	envelope.Data = projectModel
+
+	RespondJson(w, envelope, http.StatusCreated)
 }

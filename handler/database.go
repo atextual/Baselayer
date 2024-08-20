@@ -84,3 +84,46 @@ func CreateDatabase(w http.ResponseWriter, r *http.Request) {
 
 	RespondJson(w, envelope, http.StatusCreated)
 }
+
+func DeleteDatabase(w http.ResponseWriter, r *http.Request) {
+	envelope := model.ResponseEnvelope{
+		Message: "",
+		Data:    nil,
+	}
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		envelope.Message = "Cannot convert string representation of id to int"
+
+		RespondJson(w, envelope, http.StatusBadRequest)
+		return
+	}
+
+	cxn, err := repo.GetConnection()
+	if err != nil {
+		panic(err) // @todo - update this to something useful
+	}
+
+	project, err := repo.GetDatabase(cxn.Db, id)
+	if err != nil {
+		panic(err) // @todo - see above
+	}
+
+	if project == nil {
+		envelope.Message = "Project not found"
+		RespondJson(w, envelope, http.StatusNotFound)
+		return
+	}
+
+	err = repo.DeleteDatabase(cxn.Db, project)
+	if err != nil {
+		envelope.Message = err.Error() // @todo - check this isn't a system exception
+		RespondJson(w, envelope, http.StatusInternalServerError)
+		return
+	}
+
+	envelope.Message = "Database deleted successfully"
+	RespondJson(w, envelope, http.StatusOK)
+	return
+}

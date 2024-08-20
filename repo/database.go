@@ -2,6 +2,7 @@ package repo
 
 import (
 	"BaseLayer/model"
+	"errors"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -78,4 +79,32 @@ func GetDatabase(connection *sqlx.DB, id int) (*model.Database, error) {
 	}
 
 	return &database, nil
+}
+
+func DeleteDatabase(connection *sqlx.DB, database *model.Database) error {
+	if connection == nil {
+		cxn, err := GetConnection()
+		if err != nil {
+			return err
+		}
+
+		connection = cxn.Db
+	}
+
+	stmt := `DELETE FROM databases WHERE id = ?`
+	res, err := connection.Exec(stmt, database.Id)
+	if err != nil {
+		return err
+	}
+
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rows == 0 {
+		return errors.New("no rows were affected by the delete operation")
+	}
+
+	return nil
 }
